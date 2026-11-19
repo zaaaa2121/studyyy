@@ -1675,7 +1675,8 @@ html.no-anim-sw .sw .v18ce{display:none}
 
 /* ===== v26: phone / tablet layout ===== */
 @media(max-width:1000px){.sw .sw-cal{top:auto;bottom:184px}.sw-fr{top:124px;bottom:auto;left:12px}}
-@media(max-width:700px){.sw .sw-cal{display:none!important}.sw-fr{width:170px;padding:5px 8px}.sw-fr .fs{display:none}.sw-fr button{padding:5px 4px;font-size:11px}.sw .sw-goal,.sw .sw-roomc{top:140px}.sw .sw-note{top:196px!important;left:12px!important;transform:scale(.82);transform-origin:0 0}.sw .sw-col{display:none}.sw-fr{top:auto;bottom:186px;left:12px;right:auto}}
+@media(max-width:1000px),(pointer:coarse){.sw .sw-cal{display:none!important}}
+@media(max-width:700px){.sw-fr{width:170px;padding:5px 8px}.sw-fr .fs{display:none}.sw-fr button{padding:5px 4px;font-size:11px}.sw .sw-goal,.sw .sw-roomc{top:140px}.sw .sw-note{top:196px!important;left:12px!important;transform:scale(.82);transform-origin:0 0}.sw .sw-col{display:none}.sw-fr{top:auto;bottom:186px;left:12px;right:auto}}
 </style>
 
 <div class="wrap">
@@ -5445,7 +5446,7 @@ function poll(){if(busy)return;var s=S();if(!db()||!s.frName||s.frOn===0)return;
   fr=nf;ST=Object.keys(fr).length?'Connected':'Room open. Waiting for your friend';busy=0;draw()}).catch(function(e){busy=0;ST=(e===401||e===403)?'Database blocked. Set rules to test mode.':e===404?'Database URL not found. Check it.':'No internet. Will retry.';fr={};draw()})}
 function bye(){try{if(db()&&S().frName)fetch(url(id()),{method:'DELETE',keepalive:true})}catch(e){}}
 function when(f){return f.st==='f'?'📖 studying'+(f.m!=null?' · '+f.m+' min':''):f.st==='b'?'☕ on a break':'🪑 here, not started'}
-function draw(){var o=document.getElementById('sw-fr');if(!o)return;var s=S(),ids=Object.keys(fr),h='<div class="fh">👫 Study buddy</div>';
+function draw(){var o=document.getElementById('sw-fr');if(!o)return;var s=S(),ids=Object.keys(fr),h='<div class="fh">👫 Study buddy · v27</div>';
  if(!db())h+='<div class="fb"><input class="fi" data-k="db" placeholder="Paste database URL"><button data-a="db">Save</button></div><div class="fs">One-time setup. Needs your free Firebase database URL.</div>';
  else if(!s.frName)h+='<div class="fb"><input class="fi" data-k="nm" maxlength="12" placeholder="Your first name"><button data-a="name">Save</button></div><div class="fs">Your friend sees this name when you both study.</div>';
  else if(s.frOn===0)h+='<div class="fb"><button data-a="on">Rejoin room</button></div>';
