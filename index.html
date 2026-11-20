@@ -1677,6 +1677,28 @@ html.no-anim-sw .sw .v18ce{display:none}
 @media(max-width:1000px){.sw .sw-cal{top:auto;bottom:184px}.sw-fr{top:124px;bottom:auto;left:12px}}
 @media(max-width:1000px),(pointer:coarse){.sw .sw-cal{display:none!important}}
 @media(max-width:700px){.sw-fr{width:170px;padding:5px 8px}.sw-fr .fs{display:none}.sw-fr button{padding:5px 4px;font-size:11px}.sw .sw-goal,.sw .sw-roomc{top:140px}.sw .sw-note{top:196px!important;left:12px!important;transform:scale(.82);transform-origin:0 0}.sw .sw-col{display:none}.sw-fr{top:auto;bottom:186px;left:12px;right:auto}}
+
+/* ===== v28: no status chip, buddy avatars + join banner, catchier calendar ===== */
+.sw .sw-chip{display:none!important}.sw .sw-top .sw-ico{margin-left:auto}
+.sw-fj{position:absolute;z-index:9;top:72px;left:50%;transform:translate(-50%,-20px) scale(.85);opacity:0;pointer-events:none;display:flex;align-items:center;gap:10px;padding:7px 18px 7px 10px;border-radius:99px;background:rgba(20,14,10,.94);border:1.5px solid #ffd27a;color:#fff3d6;font:600 14px system-ui,sans-serif;white-space:nowrap}
+.sw-fj .e{font-size:30px;line-height:1;display:block}
+.sw-fj.on{animation:v28pop 4.2s ease-out forwards}.sw-fj.on .e{animation:v28b .55s ease-in-out 3}
+@keyframes v28pop{0%{opacity:0;transform:translate(-50%,-20px) scale(.8)}9%{opacity:1;transform:translate(-50%,0) scale(1.08)}15%{transform:translate(-50%,0) scale(1)}85%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-10px) scale(.95)}}
+@keyframes v28b{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px) scale(1.12)}}
+.sw-fr .av{font-size:19px;background:rgba(255,255,255,.14);width:34px;height:34px}
+.sw-fr .fh{display:flex;align-items:center;justify-content:space-between}
+.sw-fr .fh .me{flex:none;width:28px;height:28px;padding:0;border-radius:50%;font-size:16px;line-height:1;background:rgba(255,255,255,.16)}
+.sw-fr .avs{display:flex;flex-wrap:wrap;gap:4px}.sw-fr .avs button{flex:none;width:30px;height:30px;padding:0;font-size:17px;border-radius:9px;background:rgba(255,255,255,.12)}.sw-fr .avs button.sel{outline:2px solid #ffd27a;background:rgba(255,210,122,.3)}
+.sw .sw-cal[data-t="hot"] .cn,.sw .sw-cal[data-t="crit"] .cn,.cg2 .cd.today{animation:v28p 1.8s steps(8,end) infinite}
+@keyframes v28p{0%,100%{opacity:1}50%{opacity:.62}}
+.sw[data-idle] .cn,.sw[data-idle] .cd.today,html.tab-bg .cn,html.tab-bg .cd.today,html.no-anim-sw .cn,html.no-anim-sw .cd.today,html.no-anim-sw .sw-fj.on,html.no-anim-sw .sw-fj .e{animation:none!important}
+@media(max-width:700px){.sw .sw-goal,.sw .sw-roomc{top:100px!important}.sw .sw-note{top:156px!important}.sw-fj{top:150px}}
+
+/* ===== v29: buddy sits at the table ===== */
+@media(min-width:1001px){.sw[data-buddy] .sw-bun{bottom:2.5%}}
+#sw-bd .bdav{transform-box:fill-box;transform-origin:50% 100%;animation:v29b 2.4s steps(8,end) infinite}
+@keyframes v29b{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.sw[data-idle] #sw-bd .bdav,html.tab-bg #sw-bd .bdav,html.no-anim-sw #sw-bd .bdav{animation:none}
 </style>
 
 <div class="wrap">
@@ -5267,7 +5289,8 @@ function peerSvg(p,i){
  '<rect x="-44" y="353" width="88" height="15" rx="3" fill="#1c1410" opacity=".88"/><text class="v18nm" x="0" y="363.5" text-anchor="middle" font-size="7.6" font-family="system-ui,sans-serif" font-weight="600" fill="#f6e7c8">'+p.n+' • '+ST[p.s]+'</text>'+
  '<rect class="v18hit" data-i="'+i+'" x="-54" y="244" width="108" height="144" rx="8" tabindex="0" role="button" aria-label="Send '+p.n+' a kudos"/></g>';
 }
-var rmDefaults={peers:1,pulse:1,race:1,react:1,dimdef:0,cal:1};
+window._bgPeerSvg=peerSvg;window._bgPEERS=PEERS;
+var rmDefaults={peers:1,pulse:1,race:1,react:1,dimdef:0,cal:0};
 var TIPS=['Start before you feel ready.','Pick one question to answer this block.','Phone away. You are already ahead.','Write this block’s goal in one line.','Hard now, easy in the exam.'];
 var BREAKQ=['Write 3 things you remember. No peeking.','Explain the last idea aloud in one line.','Stand, stretch, sip water.','What exam question could come from this block?'];
 var TH=[30,60,90,120,180],mh={},mf={},tipN=0,bn=0,lastMode='',raceKey='',lastRank=null,lastChase=0,ct=0;
@@ -5348,7 +5371,7 @@ function calRender(o){
   tier=D<=7?'crit':D<=14?'hot':D<=30?'warn':'calm',
   MSG={calm:'Every day you skip is gone for good.',warn:'Time is shrinking. Make today count.',hot:'Final stretch. No wasted days now.',crit:'Last days. Every hour matters.'};
  o.querySelector('#sw-cal').setAttribute('data-t',tier);
- q('.cn').textContent=Math.max(0,D);q('.cl2').textContent=E?(D>0?'DAYS TO EXAM':D===0?'EXAM DAY':'EXAM OVER'):'DAYS LEFT';
+ q('.cn').textContent=Math.max(0,D);q('.cl2').textContent=E?(D>0?'DAYS TO EXAM · '+Math.max(0,Math.round((E-new Date())/36e5)).toLocaleString('en-IN')+' HRS':D===0?'EXAM DAY':'EXAM OVER'):'DAYS LEFT';
  q('.cmsg').textContent=E&&D<=0?'Trust your preparation.':MSG[tier];
  q('.cbar i').style.transform='scaleX('+pct.toFixed(3)+')';
  q('.csub').textContent=Math.round(pct*100)+'% of your time is gone · '+gone+' days gone · '+(E?Math.max(0,D)+' to go':left+' left');
@@ -5376,7 +5399,7 @@ function tickPeers(o){
  });
 }
 function rmHtml(){var r=rm();function sw(id,t,s){return '<label class="sx-switch"><input type="checkbox" id="rm-'+id+'"'+(r[id]?' checked':'')+'><i></i><span>'+t+'<small>'+s+'</small></span></label>'}
- return '<div class="sx-head"><div><h3>👥 Study room</h3><p class="sx-sub">Choose what the room shows. All of it is light on battery.</p></div></div>'+sw('cal','Study calendar','Nov–Dec days crossed out with hours studied')+sw('peers','Study peers','Illustrated companions at nearby desks')+sw('race','Study race','Friendly minutes-today comparison')+sw('pulse','Room Pulse','Quiet milestone ticker')+sw('react','Peer reactions','Blinks, sips, page turns, cheers. Off means fully still')+sw('dimdef','Start in Dimmer','Open Study With Me with the black screen on')}
+ return '<div class="sx-head"><div><h3>👥 Study room</h3><p class="sx-sub">Choose what the room shows. All of it is light on battery.</p></div></div>'+sw('cal','My exam calendar','Only for you. Never shown on phones')+sw('peers','Study peers','Illustrated companions at nearby desks')+sw('race','Study race','Friendly minutes-today comparison')+sw('pulse','Room Pulse','Quiet milestone ticker')+sw('react','Peer reactions','Blinks, sips, page turns, cheers. Off means fully still')+sw('dimdef','Start in Dimmer','Open Study With Me with the black screen on')}
 function rmBind(box){['cal','peers','race','pulse','react','dimdef'].forEach(function(k){var e=box.querySelector('#rm-'+k);if(e)e.onchange=function(){rm()[k]=this.checked?1:0;pgSave();var o=document.getElementById('fm');if(o)syncAttrs(o)}})}
 var _o=swOpen;swOpen=function(){
  if(!document.getElementById('fm')&&rm().dimdef)sw3().dim=true;
@@ -5430,43 +5453,63 @@ var _f=pgFinish;pgFinish=function(){var was=pgState.mode,ot=!!pgState.ot,r=_f.ap
 })();
 /* ===== v23: standing study-buddy room via Firebase Realtime Database (REST). Shares ONLY name + studying/break/idle (+ session minutes if you turn it on). ===== */
 (function(){
-var DBU='https://studyyy-together-default-rtdb.asia-southeast1.firebasedatabase.app',ROOM='wv7ph4adju',fr={},last='',note='',rend='',ST='',nextAt=0,lastSt='',busy=0;
+var AVS=['🦊','🐼','🐰','🐯','🐨','🦉','🐧','🐱','🥷','🧙','👩‍🎓','🧑‍🎓'],DBU='https://studyyy-together-default-rtdb.asia-southeast1.firebasedatabase.app',ROOM='wv7ph4adju',fr={},last='',note='',rend='',ST='',nextAt=0,lastSt='',busy=0;
 function S(){return sw3()}
 function db(){var u=(DBU||S().frDb||'').trim().replace(/\/+$/,'');return /^https:\/\/[^\s]+$/.test(u)?u:''}
 function id(){var s=S();if(!s.frId){s.frId='u'+Math.random().toString(36).slice(2,9);pgSave()}return s.frId}
+function av(){var s=S();if(!s.frAv){s.frAv=AVS[Math.floor(Math.random()*AVS.length)];pgSave()}return s.frAv}
+function clean(t,n){return String(t==null?'':t).replace(/[<>&"'`\\]/g,'').slice(0,n)}
+function ban(f,t){var o=document.getElementById('fm');if(!o)return;var b=o.querySelector('#sw-fj');if(!b){o.insertAdjacentHTML('beforeend','<div class="sw-fj" id="sw-fj"></div>');b=o.querySelector('#sw-fj')}b.innerHTML='<span class="e">'+(f.a||'🙂')+'</span><span><b>'+f.n+'</b> '+t+'</span>';b.className='sw-fj';void b.offsetWidth;b.className='sw-fj on';clearTimeout(ban.t);ban.t=setTimeout(function(){b.className='sw-fj'},4200)}
 function stt(){return pgState.running&&pgState.mode==='focus'?'f':(pgState.running||pgState.ot)?'b':'i'}
 function say(t){note=t;draw()}
 function url(p){return db()+'/rooms/'+ROOM+(p?'/'+p:'')+'.json'}
 function poll(){if(busy)return;var s=S();if(!db()||!s.frName||s.frOn===0)return;busy=1;var me=id(),st=stt(),m=s.frT?Math.round(budElapsed()):null;
- fetch(url(me),{method:'PUT',body:JSON.stringify({n:s.frName,st:st,m:m,t:{'.sv':'timestamp'}})}).then(function(r){if(!r.ok)throw r.status;return fetch(url())}).then(function(r){return r.json()}).then(function(d){
+ fetch(url(me),{method:'PUT',body:JSON.stringify({n:s.frName,a:av(),st:st,m:m,t:{'.sv':'timestamp'}})}).then(function(r){if(!r.ok)throw r.status;return fetch(url())}).then(function(r){return r.json()}).then(function(d){
   d=d||{};var mine=d[me],now=mine&&mine.t||Date.now(),nf={};
-  Object.keys(d).forEach(function(k){var f=d[k];if(k===me||!f||typeof f!=='object')return;var age=now-(f.t||0);if(age<30000)nf[k]={n:String(f.n||'Friend').slice(0,12),st:f.st,m:f.m}});
-  Object.keys(nf).forEach(function(k){var o=fr[k],f=nf[k];if(!o)note=f.n+' is here 🎉';else if(o.st!=='f'&&f.st==='f')note=f.n+' started studying 📖'});
-  Object.keys(fr).forEach(function(k){if(!nf[k])note=fr[k].n+' left'});
+  Object.keys(d).forEach(function(k){var f=d[k];if(k===me||!f||typeof f!=='object')return;var age=now-(f.t||0);if(age<30000)nf[k]={n:clean(f.n||'Friend',12)||'Friend',st:f.st,m:f.m,a:clean(f.a,8)}});
+  Object.keys(nf).forEach(function(k){var o=fr[k],f=nf[k];if(!o)ban(f,'joined the room 🎉');else if(o.st!=='f'&&f.st==='f')ban(f,'started studying 📖')});
+  Object.keys(fr).forEach(function(k){if(!nf[k])ban(fr[k],'left 👋')});
   fr=nf;ST=Object.keys(fr).length?'Connected':'Room open. Waiting for your friend';busy=0;draw()}).catch(function(e){busy=0;ST=(e===401||e===403)?'Database blocked. Set rules to test mode.':e===404?'Database URL not found. Check it.':'No internet. Will retry.';fr={};draw()})}
 function bye(){try{if(db()&&S().frName)fetch(url(id()),{method:'DELETE',keepalive:true})}catch(e){}}
+
+function seat(on){var P=window._bgPEERS;if(!P)return;P[3].x=on?675:690;window.dispatchEvent(new Event('resize'))}
+function scene(){var o=document.getElementById('fm');if(!o)return;var svg=o.querySelector('#sw-svg');if(!svg||!window._bgPeerSvg)return;var ids=Object.keys(fr),f=ids.length?fr[ids[0]]:null,g=svg.querySelector('#sw-bd');
+ if(!f){if(g){g.remove();seat(0)}o.removeAttribute('data-buddy');return}
+ o.setAttribute('data-buddy','1');
+ var key=f.n+'|'+f.a;
+ if(!g||g.getAttribute('data-k')!==key){if(g)g.remove();else seat(1);
+  var hs=0;for(var q=0;q<f.n.length;q++)hs=(hs*31+f.n.charCodeAt(q))>>>0;
+  var SK=['#c98f6a','#e3b08c','#d9a07a','#b9825c','#f0c4a0'],HR=['#17110f','#2a1a18','#1d1413','#3a2a20','#120d0c'],SWC=['#e08fa8','#6aa5c9','#8fbf7a','#d6a24a','#9a7bc9'],KK=['book','laptop','hl'];
+  var p={n:f.n,tilt:-2,mo:'s',x:760,sk:SK[hs%5],hair:HR[(hs>>3)%5],sw:SWC[(hs>>5)%5],k:KK[(hs>>7)%3],hp:(hs>>9)%3?0:'#ffb35c',s:0,mug:1,long:(hs>>11)%2};
+  var html=window._bgPeerSvg(p,9).replace(/<rect class="v18hit"[^>]*\/>/,'');
+  var all=svg.querySelectorAll('.v18p'),last=all[all.length-1];if(!last)return;
+  last.insertAdjacentHTML('afterend','<g id="sw-bd" data-k="'+key+'">'+html+'</g>');g=svg.querySelector('#sw-bd')}
+ var t=g.querySelector('.v18nm'),s=(f.a||'🙂')+' '+f.n+' • '+(f.st==='f'?'study'+(f.m!=null?' '+f.m+'m':'ing'):f.st==='b'?'on break':'here');if(t&&t.textContent!==s)t.textContent=s;
+ var op=f.st==='f'?'1':'.78';if(g.style.opacity!==op)g.style.opacity=op}
 function when(f){return f.st==='f'?'📖 studying'+(f.m!=null?' · '+f.m+' min':''):f.st==='b'?'☕ on a break':'🪑 here, not started'}
-function draw(){var o=document.getElementById('sw-fr');if(!o)return;var s=S(),ids=Object.keys(fr),h='<div class="fh">👫 Study buddy · v27</div>';
+function draw(){var o=document.getElementById('sw-fr');if(!o)return;var s=S(),ids=Object.keys(fr),h='<div class="fh">👫 Study buddy<button class="me" data-a="me" title="Change my avatar">'+av()+'</button></div>';
  if(!db())h+='<div class="fb"><input class="fi" data-k="db" placeholder="Paste database URL"><button data-a="db">Save</button></div><div class="fs">One-time setup. Needs your free Firebase database URL.</div>';
- else if(!s.frName)h+='<div class="fb"><input class="fi" data-k="nm" maxlength="12" placeholder="Your first name"><button data-a="name">Save</button></div><div class="fs">Your friend sees this name when you both study.</div>';
+ else if(!s.frName)h+='<div class="fs">Pick your face:</div><div class="avs">'+AVS.map(function(e){return '<button data-a="av" data-v="'+e+'" class="'+(e===av()?'sel':'')+'">'+e+'</button>'}).join('')+'</div><div class="fb"><input class="fi" data-k="nm" maxlength="12" placeholder="Your first name"><button data-a="name">Save</button></div><div class="fs">Your friend sees this name when you both study.</div>';
  else if(s.frOn===0)h+='<div class="fb"><button data-a="on">Rejoin room</button></div>';
- else{ids.forEach(function(i){var f=fr[i];h+='<div class="fr'+(f.st==='f'?' on':'')+'"><span class="av">'+f.n.charAt(0).toUpperCase()+'</span><span><b>'+f.n+'</b><small>'+when(f)+'</small></span></div>'});
+ else{ids.forEach(function(i){var f=fr[i];h+='<div class="fr'+(f.st==='f'?' on':'')+'"><span class="av">'+(f.a||f.n.charAt(0).toUpperCase())+'</span><span><b>'+f.n+'</b><small>'+when(f)+'</small></span></div>'});
   if(!ids.length)h+='<div class="fs">'+(ST||'Connecting…')+'</div>';
-  h+='<div class="fb"><button data-a="tm">Timer '+(s.frT?'on':'off')+'</button><button data-a="rt">Retry</button><button data-a="off">Leave</button></div><div class="fs">Your hours and goal stay private.</div>'}
+  h+='<div class="fb"><button data-a="tm">Timer '+(s.frT?'on':'off')+'</button><button data-a="rt">Retry</button><button data-a="off">Leave</button></div>'+(ids.length?'':'<div class="fs">Your hours and goal stay private.</div>')}
  if(note)h+='<div class="fn">'+note+'</div>';
- if(h!==rend){rend=h;o.innerHTML=h}}
+ if(h!==rend){rend=h;o.innerHTML=h}scene()}
 var _o=swOpen;swOpen=function(){_o();var o=document.getElementById('fm');if(!o||!o.classList.contains('sw')||o.querySelector('#sw-fr'))return;
  o.insertAdjacentHTML('beforeend','<div class="sw-fr" id="sw-fr"></div>');rend='';var c=o.querySelector('#sw-fr');
  c.addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){var b=c.querySelector('[data-a=name],[data-a=db]');if(b)b.click()}});
  c.addEventListener('click',function(e){var a=e.target.getAttribute&&e.target.getAttribute('data-a'),s=S();if(!a)return;var i=c.querySelector('.fi'),v=(i&&i.value||'').trim();
   if(a==='db'){if(/^https:\/\//.test(v)){s.frDb=v;pgSave();nextAt=0;draw()}}
   else if(a==='name'){if(v){s.frName=v.slice(0,12);pgSave();nextAt=0;draw()}}
+  else if(a==='av'){s.frAv=e.target.getAttribute('data-v');pgSave();draw()}
+  else if(a==='me'){var i2=AVS.indexOf(av());s.frAv=AVS[(i2+1)%AVS.length];pgSave();nextAt=0;draw()}
   else if(a==='tm'){s.frT=s.frT?0:1;pgSave();nextAt=0;draw()}
   else if(a==='rt'){ST='Retrying…';nextAt=0;busy=0;draw()}
   else if(a==='off'){s.frOn=0;pgSave();bye();fr={};note='';draw()}
   else if(a==='on'){s.frOn=1;pgSave();nextAt=0;draw()}});
  nextAt=0;draw()};fmOpen=swOpen;
-var _c=swClose;swClose=function(){bye();fr={};_c()};fmClose=swClose;
+var _c=swClose;swClose=function(){bye();fr={};seat(0);_c()};fmClose=swClose;
 window.addEventListener('pagehide',bye);
 var _s=swSync;swSync=function(){_s();if(!document.getElementById('sw-fr'))return;var now=Date.now(),st=stt();if(now>=nextAt||st!==lastSt){lastSt=st;nextAt=now+8000;poll()}};
 })();
