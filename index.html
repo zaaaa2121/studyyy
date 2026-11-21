@@ -5813,42 +5813,45 @@ var _s=swSync;swSync=function(){_s();tick()};
 /* ===== v36: live study hall, bell sessions, daily challenge (event driven, no new animations) ===== */
 (function(){
 var $=function(i){return document.getElementById(i)},prev=null,lastCyc=-1,lastT=0,focSec=0,sFoc=0,doneToast='';
-function RX(){var o=sw3();if(!o.rx)o.rx={ss:1,hl:1,ch:1,cn:16};var r=o.rx;if(!(r.cn>=3&&r.cn<=24))r.cn=16;return r}
+function RX(){var o=sw3();if(!o.rx)o.rx={ss:1,hl:1,ch:1,cn:16};var r=o.rx;if(!(r.cn>=3&&r.cn<=24))r.cn=16;if(!(r.sl>=15&&r.sl<=180))r.sl=25;if(!(r.sb>=5&&r.sb<=30))r.sb=5;if(!(r.sf>=0&&r.sf<1440))r.sf=360;return r}
+function tm(m){m=((m%1440)+1440)%1440;var h=Math.floor(m/60),a=h>=12?'pm':'am';return (h%12||12)+':'+('0'+m%60).slice(-2)+a}
+function dur(sec){var m=Math.ceil(sec/60);return m>=60?Math.floor(m/60)+'h '+('0'+m%60).slice(-2)+'m':m+'m'}
 function bt(on){return '<button data-hc="%" class="'+(on?'on':'')+'">'+(on?'ON':'OFF')+'</button>'}
 window._bgRows=function(){var r=RX();return '<div style="height:1px;background:rgba(255,255,255,.15);margin:10px 0"></div>'+
- '<div class="r"><span>🔔 Study sessions<br><small style="margin:0">bell at :00 and :30</small></span>'+bt(r.ss).replace('%','ss')+'</div>'+
+ '<div class="r"><span>🔔 Study sessions<br><small style="margin:0">'+r.sl+' min + '+r.sb+' break, from '+tm(r.sf)+'</small></span>'+bt(r.ss).replace('%','ss')+'</div>'+'<div class="r" style="flex-wrap:wrap;gap:5px">'+[[25,5],[50,10],[60,10],[90,15],[120,20]].map(function(q){return '<button data-hc="pr:'+q[0]+':'+q[1]+'" class="'+(r.sl===q[0]&&r.sb===q[1]?'on':'')+'">'+q[0]+'</button>'}).join('')+'</div>'+'<div class="r"><span>Session</span><span><button data-hc="lm" aria-label="Shorter">−</button> <b>'+r.sl+'m</b> <button data-hc="lp" aria-label="Longer">+</button></span></div>'+'<div class="r"><span>Break</span><span><button data-hc="bm" aria-label="Shorter">−</button> <b>'+r.sb+'m</b> <button data-hc="bp" aria-label="Longer">+</button></span></div>'+'<div class="r"><span>First at</span><span><button data-hc="am" aria-label="Earlier">−</button> <b>'+tm(r.sf)+'</b> <button data-hc="ap" aria-label="Later">+</button></span></div>'+
  '<div class="r"><span>👥 Peers come &amp; go</span>'+bt(r.hl).replace('%','hl')+'</div>'+
  '<div class="r"><span>🎯 Daily challenge</span>'+bt(r.ch).replace('%','ch')+'</div>'+
  '<div class="r"><span>Blocks to finish</span><span><button data-hc="cm" aria-label="Fewer">−</button> <b>'+r.cn+'</b> <button data-hc="cp" aria-label="More">+</button></span></div>'};
-window._bgRx=function(a){var r=RX();if(a==='ss')r.ss=r.ss?0:1;else if(a==='hl')r.hl=r.hl?0:1;else if(a==='ch')r.ch=r.ch?0:1;else if(a==='cm')r.cn=Math.max(3,r.cn-1);else if(a==='cp')r.cn=Math.min(24,r.cn+1);else return false;return true};
+window._bgRx=function(a){var r=RX();if(a==='ss')r.ss=r.ss?0:1;else if(a==='hl')r.hl=r.hl?0:1;else if(a==='ch')r.ch=r.ch?0:1;else if(a==='cm')r.cn=Math.max(3,r.cn-1);else if(a==='cp')r.cn=Math.min(24,r.cn+1);else if(a==='lm')r.sl=Math.max(15,r.sl-5);else if(a==='lp')r.sl=Math.min(180,r.sl+5);else if(a==='bm')r.sb=Math.max(5,r.sb-5);else if(a==='bp')r.sb=Math.min(30,r.sb+5);else if(a==='am')r.sf=(r.sf+1410)%1440;else if(a==='ap')r.sf=(r.sf+30)%1440;else if(a.indexOf('pr:')===0){var q=a.split(':');r.sl=+q[1];r.sb=+q[2]}else return false;lastCyc=-1;return true};
 function hash(i,s){var x=Math.sin((Math.floor(Date.now()/864e5)*131+i*17.3+s*7.7)*12.9898)*43758.5453;return x-Math.floor(x)}
 function inHall(H){var s=Math.floor(H/1.5),P=H<5?.2:H<6?.35:H<9?.7:H<13?.85:H<16?.6:H<22?.9:.5,a=[0,1,2,3].map(function(i){return i&&hash(i,s)<P}),n=a[1]+a[2]+a[3];if(!n&&H>=5.5)a[1+s%3]=true;return a}
 function say(t){var e=$('sw-pulse');if(!e)return;e.textContent=t;e.classList.add('pk');clearTimeout(say.t);say.t=setTimeout(function(){e.classList.remove('pk')},9000)}
 function bell(){if(!pgState.sound)return;try{var A=window.AudioContext||window.webkitAudioContext,c=new A(),t=c.currentTime;[[880,0],[1320,.22]].forEach(function(q){var o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=q[0];o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.0001,t+q[1]);g.gain.exponentialRampToValueAtTime(.18,t+q[1]+.03);g.gain.exponentialRampToValueAtTime(.0001,t+q[1]+.7);o.start(t+q[1]);o.stop(t+q[1]+.75)});setTimeout(function(){c.close()},1600)}catch(e){}}
 function two(n){return ('0'+n).slice(-2)}
 function tick(){var o=$('fm');if(!o||!o.classList.contains('sw')){prev=null;lastCyc=-1;return}
- var r=RX(),now=new Date(),H=now.getHours()+now.getMinutes()/60,ms=now.getTime(),svg=o.querySelector('#sw-svg'),names=['Ghost','Diya','Meera','Rohan'];
+ var r=RX(),S0=sw3(),now=new Date(),H=now.getHours()+now.getMinutes()/60,ms=now.getTime(),svg=o.querySelector('#sw-svg'),names=['Ghost','Diya','Meera','Rohan'];
  /* hall */
  var hall=r.hl?inHall(H):[0,1,1,1];
  if(svg){for(var i=1;i<4;i++){var g=svg.querySelector('.v18p[data-i="'+i+'"]'),hh=svg.querySelector('.v18hit[data-i="'+i+'"]'),on=!!hall[i];if(g){var v=on?'':'0';if(g.style.opacity!==v){if(prev===null)g.style.transition='none';g.style.opacity=v;if(prev===null)setTimeout(function(q){q.style.transition=''}.bind(null,g),50)}}if(hh)hh.style.pointerEvents=on?'':'none'}}
  var msg='';if(prev){for(var j=1;j<4;j++){if(hall[j]!==prev[j]&&!msg)msg=names[j]+(hall[j]?' just sat down 📖':' packed up and left 🎒')}}
  prev=hall;
  /* sessions */
- var min=now.getMinutes(),sm=min%30,live=sm<25,cyc=Math.floor(ms/1800000),st=new Date(ms-(sm*60+now.getSeconds())*1000),stl=st.getHours()+':'+two(st.getMinutes()),left=Math.max(0,25*60-(sm*60+now.getSeconds())),nx=new Date(st.getTime()+1800000),nxl=nx.getHours()+':'+two(nx.getMinutes()),toNext=Math.max(0,1800-(sm*60+now.getSeconds()));
+ var LS=r.sl*60,CS=(r.sl+r.sb)*60,lc=ms-now.getTimezoneOffset()*60000,dn=Math.floor(lc/864e5),lm=lc-dn*864e5-r.sf*60000,pos=((lm/1000)%CS+CS)%CS,live=pos<LS,cyc=dn*1000+Math.floor(lm/(CS*1000)),st=new Date(ms-pos*1000),stl=st.getHours()+':'+two(st.getMinutes()),left=Math.max(0,LS-pos),nx=new Date(st.getTime()+CS*1000),nxl=nx.getHours()+':'+two(nx.getMinutes()),toNext=Math.max(0,CS-pos);
+ if(S0.pf!=null&&(pgState.mode!=='focus'||(!pgState.running&&ms>S0.pe+60000))){pgState.focus=S0.pf;if(pgState.mode==='focus'&&!pgState.running)pgState.remaining=pgDuration();delete S0.pf;delete S0.pe;pgSave()}
  var run=pgState.running&&pgState.mode==='focus',dt=lastT?Math.min(3000,ms-lastT):0;lastT=ms;if(run&&live)focSec+=dt/1000;
  var others=hall[1]+hall[2]+hall[3];
  if(r.ss){if(lastCyc>=0&&cyc!==lastCyc){bell();msg=(others?others+' ':'No one else ')+(others?'with you · ':'')+stl+' session begins 🔔';sFoc=0;focSec=0}
-  else if(lastCyc>=0&&live===false&&o.__live){var fm=Math.round(focSec/60);msg=stl+' session done · you focused '+fm+' of 25 min'+(others?' · '+others+' studied with you':'')+' ✅';focSec=0}
+  else if(lastCyc>=0&&live===false&&o.__live){var fm=Math.round(focSec/60);msg=stl+' session done · you focused '+fm+' of '+r.sl+' min'+(others?' · '+others+' studied with you':'')+' ✅';focSec=0}
   o.__live=live}
  lastCyc=cyc;
  if(msg)say(msg);
  /* dock line */
  var bl=pgState.round||0,exp=r.cn*Math.max(0,Math.min(1,(H-7)/15)),d=bl-Math.floor(exp+.0001),x='';
  if(r.ch){x+=bl>=r.cn?'🎯 '+bl+'/'+r.cn+' <b>✓ done</b>':'🎯 '+bl+'/'+r.cn+(exp<1?'':d>=0?' · <b>'+(d?d+' ahead':'on pace')+'</b>':' · <u>'+(-d)+' behind</u>')}
- if(r.ss){x+=(x?' · ':'')+(live?(run?'🔔 '+stl+' · '+Math.ceil(left/60)+'m left':'🔔 live · '+Math.ceil(left/60)+'m · tap Start'):'🔔 next '+nxl+' · '+Math.ceil(toNext/60)+'m')}
+ if(r.ss){x+=(x?' · ':'')+(live?(run?'🔔 '+stl+' · '+dur(left)+' left':'🔔 live · '+dur(left)+' left'):'🔔 next '+nxl+' · '+dur(toNext))}
  var e=$('sw-xl');if(e&&e.__x!==x){e.__x=x;e.innerHTML=x}
  if(r.ch&&bl>=r.cn&&doneToast!==dayKey()){doneToast=dayKey();try{pgToast('🎯 Daily challenge complete · '+bl+' blocks')}catch(q){}}}
-document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('#sw-pp');if(!b)return;var r=RX();if(!r.ss||pgState.running||pgState.mode!=='focus'||pgState.ot)return;var n=new Date(),sm=n.getMinutes()%30,left=25*60-(sm*60+n.getSeconds());if(sm<25&&left>=120&&pgState.remaining===pgDuration()){pgState.remaining=left}},true);
+document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('#sw-pp');if(!b)return;var r=RX(),S0=sw3();if(!r.ss||pgState.running||pgState.mode!=='focus'||pgState.ot||S0.pf!=null||pgState.remaining!==pgDuration())return;var n=new Date(),ms=n.getTime(),CS=(r.sl+r.sb)*60,lc=ms-n.getTimezoneOffset()*60000,lm=lc-Math.floor(lc/864e5)*864e5-r.sf*60000,pos=((lm/1000)%CS+CS)%CS,left=r.sl*60-pos;if(left>=120){var mins=Math.ceil(left/60);S0.pf=pgState.focus;S0.pe=ms+left*1000;pgState.focus=mins;pgState.remaining=mins*60;pgSave()}},true);
 var _s=swSync;swSync=function(){_s();tick()};
 })();
 pgMigrate();envApply();navBuild();showHome();navSync();
