@@ -1993,6 +1993,8 @@ html.no-anim-sw #sw-tl .nw i,.sw[data-idle] #sw-tl .nw i{animation:none}
 #bged,#bgnt{position:fixed;inset:0;z-index:9650;background:rgba(5,4,14,.76);display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#fff;padding:12px}
 #bged .bqc,#bgnt .bqc{width:min(540px,100%);max-height:92vh;overflow:auto;background:rgba(24,18,40,.99);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:18px}
 #bged h3,#bgnt h3{margin:0 0 8px;font:700 19px system-ui}#bged h4{margin:14px 0 6px;font:700 13px system-ui;opacity:.8;text-transform:uppercase;letter-spacing:.06em}
+#bged .emo{margin:0 0 8px;font-size:14px;line-height:1.45;color:#ffd9a0}
+#bged .emo{margin:0 0 8px;font-size:14px;line-height:1.45;color:#ffd9a0}
 #bged .eb{font-size:15px;opacity:.95}#bged .eb b{font-size:30px;color:#f5b45a}#bged .eb span{opacity:.7;font-size:13px}
 #bged .ebars{display:flex;gap:8px;align-items:flex-end;height:84px;margin:10px 0 2px}
 #bged .ebb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;font-size:11px;opacity:.85}#bged .ebb i{width:100%;max-width:34px;background:rgba(245,180,90,.45);border-radius:5px 5px 2px 2px;display:block}#bged .ebb.tn i{background:#f5b45a}#bged .ebb small{font-size:10px;opacity:.8}
@@ -2057,6 +2059,10 @@ html.win-blur .sw .sw-svg,html.win-blur .sw .sw-svg *{animation-play-state:pause
 /* v61: only the rain animates; no snow / petals / leaves / extra window motion */
 .sw .wxr,.sw .g-bch-fx,.sw .g-sun-fx,.sw .g-cafe-fx{display:none!important}
 .sw .wxa,.sw .wxs,.sw .wxp,.sw .wxl{animation:none!important}
+
+/* v62: no looping animations anywhere except the rain (saves battery and fan noise) */
+*,*::before,*::after{animation-iteration-count:1!important}
+.v17rain,.v17rain *{animation-iteration-count:infinite!important}
 /* v41 hour rooms + lamps */
 .sw .sw-tint{display:none!important}
 .sw .sw-hf{position:absolute;inset:0;z-index:40;pointer-events:none;opacity:0;animation:swHf 2.2s ease-out 1}@keyframes swHf{0%{opacity:0}18%{opacity:.6}100%{opacity:0}}
@@ -3749,7 +3755,7 @@ var pgMs=0;
 function pgJuice(rem,total){if(pgState.running&&pgState.mode==='focus'&&total){var f=1-rem/total,m=f>=.75?3:f>=.5?2:f>=.25?1:0;if(m>pgMs){pgMs=m;var rg=document.getElementById('pg-clock-wrap'),lab=['','Quarter done','Halfway there','Final quarter'][m];if(rg){rg.classList.remove('pg-pulse');void rg.offsetWidth;rg.classList.add('pg-pulse')}var l2=document.getElementById('pg-pl');if(l2&&lab){l2.dataset.hold=String(Date.now()+4000);l2.textContent='✨ '+lab}try{if(navigator.vibrate)navigator.vibrate(60)}catch(e){}}}else if(!pgState.running)pgMs=0;
   var i=pgPlantInfo(rem,total),e=document.getElementById('pg-pe'),l=document.getElementById('pg-pl');if(e){if(e.textContent!==i[0]){e.textContent=i[0];e.classList.remove('pg-bump');void e.offsetWidth;e.classList.add('pg-bump')}e.style.transform='scale('+i[2]+')'}if(l&&!(+l.dataset.hold>Date.now()))l.textContent=i[1]}
 function pgMicro(){if(!pgState.running)return pgState.mode==='focus'?'One session at a time':'Rest is part of the rhythm';var el=Math.floor((Date.now()-(pgState.endsAt-pgDuration()*1000))/60000),a=pgState.mode==='focus'?PG_FOCUS_MSG:PG_BREAK_MSG;return a[Math.max(0,el)%a.length]}
-function pgRaf(){if(pgRafId)cancelAnimationFrame(pgRafId);var f=function(){if(!pgState.running||!document.getElementById('pomo-app')){pgRafId=0;return}var ring=document.getElementById('pg-clock-wrap');if(ring)ring.style.setProperty('--progress',Math.max(0,Math.min(100,(pgState.endsAt-Date.now())/(pgDuration()*1000)*100)));pgRafId=requestAnimationFrame(f)};pgRafId=requestAnimationFrame(f)}
+function pgRaf(){if(pgRafId)clearTimeout(pgRafId);var f=function(){if(!pgState.running||!document.getElementById('pomo-app')){pgRafId=0;return}var ring=document.getElementById('pg-clock-wrap');if(ring)ring.style.setProperty('--progress',Math.max(0,Math.min(100,(pgState.endsAt-Date.now())/(pgDuration()*1000)*100)));pgRafId=setTimeout(f,1000)};f()}
 function pgIntro(cb){var o=document.createElement('div');o.id='pg-intro';o.className='pg-intro';o.innerHTML='<div class="pg-intro-card"><div class="pg-intro-n" id="pg-in">3</div><p>Phone away. Water ready. One task.</p><button class="pg-no" id="pg-ix">Skip</button></div>';document.body.appendChild(o);var n=3,done=false,tk;function fin(){if(done)return;done=true;clearInterval(tk);o.remove();cb()}
   tk=setInterval(function(){n--;if(n<=0){fin();return}var e=document.getElementById('pg-in');if(e){e.textContent=n;e.classList.remove('pg-bump');void e.offsetWidth;e.classList.add('pg-bump')}try{sfx('ok')}catch(x){}},900);
   o.querySelector('#pg-ix').onclick=fin}
@@ -6238,7 +6244,7 @@ function render2(){if($('bgdp'))render();tl(true);dock()}
 function bkAct(id){var d=D(),t=d.tasks.filter(function(x){return x.id===id})[0];if(!t)return;
  if(t.done){toggle(id);render2();return}
  var run=pgState.running&&pgState.mode==='focus';
- if(d.act===id&&run){toggle(id)}
+ if(d.act===id&&run){toggle(id);var dn2=d.tasks.filter(function(x){return x.done}).length;try{pgToast('✅ '+t.t+' done · '+dn2+'/'+d.tasks.length+(dn2===d.tasks.length?' · every task ticked, great day!':' · keep going, one block at a time'))}catch(e){}}
  else{sel(id);try{pgToast('▶ '+t.t)}catch(e){}
   if(!run){try{if(pgState.running)pgPause();pgState.mode='focus';pgState.remaining=pgDuration();pgSave();if(!$('pg-intro'))pgGo();try{swSync()}catch(e){}}catch(e){}}}
  render2()}
@@ -6249,12 +6255,15 @@ function eod(){var old=$('bged');if(old)old.remove();var d=D(),sec=pgTodaySec()+
  ds.forEach(function(a){bars+='<div class="ebb'+(a[2]?' tn':'')+'"><small>'+(a[1]?Math.round(a[1]/360)/10:'')+'</small><i style="height:'+Math.max(3,Math.round(a[1]/mx*50))+'px"></i><b>'+a[0]+'</b></div>'});
  var dn=L.filter(function(t){return t.done}).length,pc=Math.min(999,Math.round(sec/Math.max(1,goal)*100));
  var tm=(d.tm||[]).map(function(x,i){return '<li><i>🌙</i><span>'+esc(x.t)+'</span><em>'+hm(x.b)+(x.dl?' · by '+tmx(x.dl):'')+'</em><span class="tmb"><button data-dp="etm:'+i+'" title="Edit">✏️</button>'+(i>0?'<button data-dp="utm:'+i+'" title="Move up">↑</button>':'')+(i<(d.tm||[]).length-1?'<button data-dp="mtm:'+i+'" title="Move down">↓</button>':'')+'<button data-dp="dtm:'+i+'" title="Remove">✕</button></span></li>'}).join('');
- var h='<h3>🌙 Your day</h3><div class="eb"><b>'+hm(sec/60)+'</b> studied <span>· goal '+hm(goal/60)+' · '+pc+'%</span></div><div class="ebars">'+bars+'</div>'
+ var h='<h3>🌙 Your day</h3><p class="emo">'+emo(sec,goal,dn,L.length)+'</p><div class="eb"><b>'+hm(sec/60)+'</b> studied <span>· goal '+hm(goal/60)+' · '+pc+'%</span></div><div class="ebars">'+bars+'</div>'
   +(L.length?'<h4>Tasks · '+dn+'/'+L.length+' done</h4><ul class="erw">'+rows+'</ul>':'<p class="emu">No planned tasks today.</p>')
   +(d.bank.s?'<div class="esv">⏱ Time saved by finishing early: <b>'+hm(d.bank.s)+'</b>'+(d.bank.u?' (used '+hm(d.bank.u)+')':'')+'</div>':'')
   +'<h4>Tomorrow</h4>'+(tm?'<ul class="erw">'+tm+'</ul>':'<p class="emu">Nothing planned yet. Add the first task so you wake up with a plan.</p>')+'<input id="eo-in" maxlength="120" autocomplete="off" placeholder="＋ Tomorrow: AS29 45m by 5pm (Enter)">'
   +'<div class="ac"><button data-dp="eoc">Keep studying</button><button class="pl" data-dp="eodn">Close the day ✓</button></div>';
  document.body.insertAdjacentHTML('beforeend','<div id="bged"><div class="bqc">'+h+'</div></div>')}
+function emo(sec,goal,dn,n){var y=new Date();y.setDate(y.getDate()-1);var ys=pgDaySec(dayKey(y)),p=sec/Math.max(1,goal),m=sec>=60?hm(sec/60):'0m',t;
+ if(p>=1)t='🏆 Goal reached. This is what a CA exam attempt is built from.';else if(p>=.6)t='💪 Strong day. '+m+' studied is '+m+' you will not have to cram later.';else if(sec>=1800)t='🌱 A real start. Tomorrow, beat today by one block.';else t='🌙 A quiet day happens. What matters is that tomorrow is planned below.';
+ if(ys>0&&sec>ys)t+=' You beat yesterday by '+hm((sec-ys)/60)+'.';if(n&&dn===n)t+=' Every task ticked.';return t}
 function eoAdd(txt){var it=parseItems(txt);if(!it.length)return;it.forEach(function(x){if(!(x.m>=5))x.m=60});apply(it,true,null);eod();var f=$('eo-in');if(f)f.focus()}
 /* ---- backup ---- */
 function bkExp(){var o={_bg:'brain-gym-backup',v:1,at:new Date().toISOString(),data:{}};for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);o.data[k]=localStorage.getItem(k)}
