@@ -2053,6 +2053,10 @@ html.sw-eco .sw .sw-svg .wxr>:nth-child(8){animation-delay:-12.0s!important}
 
 html.win-blur .sw .sw-svg,html.win-blur .sw .sw-svg *{animation-play-state:paused!important}
 #sw-hcp small{opacity:.65;font-weight:400}
+
+/* v61: only the rain animates; no snow / petals / leaves / extra window motion */
+.sw .wxr,.sw .g-bch-fx,.sw .g-sun-fx,.sw .g-cafe-fx{display:none!important}
+.sw .wxa,.sw .wxs,.sw .wxp,.sw .wxl{animation:none!important}
 /* v41 hour rooms + lamps */
 .sw .sw-tint{display:none!important}
 .sw .sw-hf{position:absolute;inset:0;z-index:40;pointer-events:none;opacity:0;animation:swHf 2.2s ease-out 1}@keyframes swHf{0%{opacity:0}18%{opacity:.6}100%{opacity:0}}
