@@ -6175,9 +6175,20 @@ function apply(items,tm,edit){var d=D(),msg='';
   msg='✓ Added: '+items.map(function(it){return it.n+' '+hm(it.m)+(it.dl?' by '+tmx(it.dl):'')}).join(', ')}
  srt(d.tasks);srt(d.tm);pgSave();if($('bgdp'))render();tl(true);if($('bged'))eod();try{pgToast(msg)}catch(e){}}
 function quick(txt,forceToday){var it=parseItems(txt);if(!it.length)return;var tm=forceToday?false:(V==='t');if(it.every(function(x){return x.m>=5}))apply(it,tm,null);else qOpen(txt,null,tm)}
+function place(P,c0){var fx=[],fr=[],out=[],k;
+ P.forEach(function(p,i){p.k=i;if(p.t.dl>0)fx.push(p);else fr.push(p)});
+ fx.sort(function(a,b){return a.t.dl-b.t.dl});
+ var nx=1e9;for(k=fx.length-1;k>=0;k--){var e0=Math.min(fx[k].t.dl,nx);fx[k].s=e0-fx[k].rem;nx=fx[k].s}
+ var cur=c0;fx.forEach(function(p){p.s=Math.max(p.s,cur);p.e=p.s+p.rem;cur=p.e});
+ var busy=fx.slice();
+ fr.forEach(function(p){busy.sort(function(a,b){return a.s-b.s});var g=c0;for(var q=0;q<busy.length;q++){if(busy[q].s-g>=p.rem-.001)break;g=Math.max(g,busy[q].e)}p.s=g;p.e=g+p.rem;busy.push(p)});
+ busy.sort(function(a,b){return a.s-b.s});
+ return busy.map(function(p){return {t:p.t,k:p.k,s:p.s,e:p.e,late:p.t.dl?Math.round(p.e-p.t.dl):-9999}})}
 function sched(){var d=D(),n=new Date(),nowM=n.getHours()*60+n.getMinutes()+n.getSeconds()/60,st=d.st||480,c=Math.max(nowM,st),out=[],L=d.tasks.filter(function(t){return !t.done&&t.b}),a=L.filter(function(t){return t.id===d.act}),r=L.filter(function(t){return t.id!==d.act});
- a.concat(r).forEach(function(t){var rem=Math.max(0,t.b-t.sp/60),e=c+rem;out.push({t:t,s:c,e:e,late:t.dl?Math.round(e-t.dl):-9999});c=e});
- return {st:st,bed:d.bed,nowM:nowM,items:out,end:c}}
+ a.forEach(function(t){var rem=Math.max(0,t.b-t.sp/60),e=c+rem;out.push({t:t,k:-1,s:c,e:e,late:t.dl?Math.round(e-t.dl):-9999});c=e});
+ out=out.concat(place(r.map(function(t){return {t:t,rem:Math.max(0,t.b-t.sp/60)}}),c));
+ var end=out.reduce(function(m,x){return Math.max(m,x.e)},c);
+ return {st:st,bed:d.bed,nowM:nowM,items:out,end:end}}
 
 var ntSg='';
 function nt(){var o=$('sw-nt'),f=$('fm');if(!o||!f)return;var d=D(),L=d.tasks,todo=L.filter(function(t){return !t.done}),done=L.length-todo.length;
@@ -6246,12 +6257,12 @@ function tl(force){var o=$('tl-v');if(!o)return;var d=D(),S=sched(),nm=S.nowM,v=
  var root=$('sw-tl'),up=Math.max(0,Math.min(1,(nm-S.st)/Math.max(60,S.bed-S.st))),hu=T?42:Math.round(42-up*34);root.style.setProperty('--u',hu);
  d.tasks.forEach(function(t){if(!t.done&&t.dl&&nm>=t.dl&&!t.dal){t.dal=1;pgSave();chime();try{pgToast('⏰ '+t.t+': your planned finish time ('+tmx(t.dl)+') has arrived')}catch(e){}}});
  var tot=Math.max(60,S.bed-S.st),pos=function(m){return Math.max(0,Math.min(100,(m-S.st)/tot*100))},items=S.items,end=S.end;
- if(T){var c=S.st;items=(d.tm||[]).map(function(x){var e=c+x.b,r={t:{t:x.t,b:x.b,dl:x.dl},s:c,e:e,late:x.dl?Math.round(e-x.dl):-9999};c=e;return r});end=c}
+ if(T){items=place((d.tm||[]).map(function(x){return {t:x,rem:x.b}}),S.st);end=items.reduce(function(m,x){return Math.max(m,x.e)},S.st)}
  $('tl-k').textContent='🕗 '+tmx(S.st)+' → '+tmx(S.bed);
  $('tl-n').innerHTML='<i></i>'+(T?'🌙 Tomorrow · '+(items.length?items.length+' task'+(items.length>1?'s':''):'nothing planned yet'):tmx(nm)+' · '+(nm<S.st?'day starts '+tmx(S.st):nm>S.bed?'day is over':hm(S.bed-nm)+' left'));
  var md=$('tl-md');md.textContent=T?'🌙 Tomorrow':'☀️ Today';var inp=$('tl-in');inp.placeholder=T?'＋ Tomorrow: AS29 45m':'＋ Today: AS29 45m';
  var h='<div class="tr">'+(T?'':'<i class="el" style="width:'+pos(nm)+'%"></i>');
- items.forEach(function(it,i){var l=pos(it.s),w=Math.max(.8,pos(it.e)-l),lt=it.e>S.bed||it.late>0;h+='<s class="bk c'+(i%6)+(lt?' lt':'')+'"'+(!T&&it.t.id?' data-dp="bk:'+it.t.id+'"':T?' data-dp="etm:'+i+'" title="Tap to edit"':'')+' style="left:'+l+'%;width:'+w+'%" title="'+ea(it.t.t)+' · '+hm(it.t.b)+'">'+esc(it.t.t)+'</s>'});
+ items.forEach(function(it,i){var l=pos(it.s),w=Math.max(.8,pos(it.e)-l),lt=it.e>S.bed||it.late>0;h+='<s class="bk c'+(i%6)+(lt?' lt':'')+'"'+(!T&&it.t.id?' data-dp="bk:'+it.t.id+'"':T?' data-dp="etm:'+it.k+'" title="Tap to edit"':'')+' style="left:'+l+'%;width:'+w+'%" title="'+ea(it.t.t)+' · '+hm(it.t.b)+'">'+esc(it.t.t)+'</s>'});
  (T?(d.tm||[]):d.tasks.filter(function(t){return !t.done})).forEach(function(t){var dl=t.dl;if(dl&&dl>=S.st&&dl<=S.bed)h+='<i class="fg" style="left:'+pos(dl)+'%" title="'+ea(t.t)+' by '+tmx(dl)+'"></i>'});
  if(!T)h+='<i class="mk" style="left:'+pos(nm)+'%"></i>';
  h+='</div><div class="tk">';for(var q=Math.ceil(S.st/60);q*60<=S.bed;q+=2)h+='<u style="left:'+pos(q*60)+'%">'+((q%24)%12||12)+((q%24)<12?'a':'p')+'</u>';h+='</div>';
