@@ -6139,7 +6139,7 @@ function render(){var p=$('bgdp');if(!p)return;var d=D(),f=flow(),wake=d.st,tot=
  h+='<ul>'+d.tasks.map(function(t){var m=Math.round(t.sp/60),ov2=t.b&&m>t.b;return '<li class="'+(t.id===d.act&&!t.done?'a ':'')+(t.done?'d':'')+'" data-id="'+t.id+'"><button class="c" data-dp="tg" aria-label="Done">'+(t.done?'✓':'')+'</button><div class="m"><span class="n">'+esc(t.t)+'</span><span class="s'+(ov2?' ov':'')+'">'+(t.done?'done in '+hm(m)+(t.sv?' · saved '+hm(t.sv):''):m+'m spent'+(t.b?' of '+t.b+'m'+(ov2?' · over by '+(m-t.b)+'m':''):' · no budget')+(t.dl?' · by '+tmx(t.dl):''))+'</span>'+(t.b&&!t.done?'<div class="pb"><i style="width:'+Math.min(100,t.sp/60/t.b*100)+'%;'+(ov2?'background:#ff9d7a':'')+'"></i></div>':'')+'</div>'+(t.done?'':'<button class="b" data-dp="ed" title="Edit time / finish-by">⏰</button><button class="b" data-dp="bu" title="Change budget">'+(t.b?t.b+'m':'+⏱')+'</button><button class="p" data-dp="go" title="Work on this now">'+(t.id===d.act?'●':'▶')+'</button>')+'<button class="x" data-dp="rm" aria-label="Remove">×</button></li>'}).join('')+'</ul>';
  h+='<div class="rw"><button data-dp="tp:Lecture: ">🎧 Lecture</button><button data-dp="tp:Reading: ">📖 Reading</button><button data-dp="tp:Questions: ">✍️ Questions</button><button data-dp="tp:Revision: ">🔁 Revision</button></div>';
  h+='<form id="dp-f"><input id="dp-i" maxlength="60" placeholder="e.g. AS29, AS28, AS26" autocomplete="off"><button class="pl" type="submit">Add</button></form>';
- h+='<div class="ft"><span>🌙 End my day</span><button data-dp="eod">Open</button></div><div class="ft"><span>🔔 Phone alerts: '+(NT().on?'ON':'off')+'</span><button data-dp="ntset">'+(NT().on?'Settings':'Set up')+'</button></div><div class="ft"><span>💾 Backup</span><span><button data-dp="bkx">Export</button> <button data-dp="bki">Import</button></span></div>'+'<div class="ft"><span>🌙 Tomorrow: '+(d.tm&&d.tm.length?d.tm.length+' task'+(d.tm.length>1?'s':'')+' ready':'not planned')+'</span><span>'+(d.tm&&d.tm.length?'<button data-dp="cltm">Clear</button> ':'')+'<button data-dp="plantm">'+(d.tm&&d.tm.length?'Add more':'Plan')+'</button></span></div>'+(d.tm||[]).map(function(x,i){return '<div class="ft"><span>&nbsp;&nbsp;'+esc(x.t)+' · '+hm(x.b)+(x.dl?' · by '+tmx(x.dl):'')+'</span><span class="tmb"><button data-dp="etm:'+i+'" title="Edit">✏️</button>'+(i>0?'<button data-dp="utm:'+i+'" title="Move up">↑</button>':'')+(i<d.tm.length-1?'<button data-dp="mtm:'+i+'" title="Move down">↓</button>':'')+'<button data-dp="dtm:'+i+'" title="Remove">✕</button></span></div>'}).join('')+'<div class="ft"><span>Day starts</span><span><button data-dp="sm">−</button> <b>'+tmx(d.st)+'</b> <button data-dp="sp">+</button></span></div><div class="ft"><span>Day ends</span><span><button data-dp="bm">−</button> <b>'+tmx(d.bed)+'</b> <button data-dp="bp">+</button></span></div><div class="ft"><span>Sound when a task’s time is up</span><button data-dp="snd">'+(d.snd?'ON':'OFF')+'</button></div>';
+ h+='<div class="ft"><span>🌙 End my day</span><button data-dp="eod">Open</button></div><div class="ft"><span>💛 Cheers: '+(CH().on?'ON':'off')+'</span><button data-dp="chset">Edit</button></div><div class="ft"><span>🔔 Phone alerts: '+(NT().on?'ON':'off')+'</span><button data-dp="ntset">'+(NT().on?'Settings':'Set up')+'</button></div><div class="ft"><span>💾 Backup</span><span><button data-dp="bkx">Export</button> <button data-dp="bki">Import</button></span></div>'+'<div class="ft"><span>🌙 Tomorrow: '+(d.tm&&d.tm.length?d.tm.length+' task'+(d.tm.length>1?'s':'')+' ready':'not planned')+'</span><span>'+(d.tm&&d.tm.length?'<button data-dp="cltm">Clear</button> ':'')+'<button data-dp="plantm">'+(d.tm&&d.tm.length?'Add more':'Plan')+'</button></span></div>'+(d.tm||[]).map(function(x,i){return '<div class="ft"><span>&nbsp;&nbsp;'+esc(x.t)+' · '+hm(x.b)+(x.dl?' · by '+tmx(x.dl):'')+'</span><span class="tmb"><button data-dp="etm:'+i+'" title="Edit">✏️</button>'+(i>0?'<button data-dp="utm:'+i+'" title="Move up">↑</button>':'')+(i<d.tm.length-1?'<button data-dp="mtm:'+i+'" title="Move down">↓</button>':'')+'<button data-dp="dtm:'+i+'" title="Remove">✕</button></span></div>'}).join('')+'<div class="ft"><span>Day starts</span><span><button data-dp="sm">−</button> <b>'+tmx(d.st)+'</b> <button data-dp="sp">+</button></span></div><div class="ft"><span>Day ends</span><span><button data-dp="bm">−</button> <b>'+tmx(d.bed)+'</b> <button data-dp="bp">+</button></span></div><div class="ft"><span>Sound when a task’s time is up</span><button data-dp="snd">'+(d.snd?'ON':'OFF')+'</button></div>';
  var keep=p.querySelector('#dp-i'),v=keep?keep.value:'',foc=document.activeElement===keep;p.querySelector('.pn').innerHTML=h;var ni=p.querySelector('#dp-i');if(ni){ni.value=v;if(foc)ni.focus()}}
 function open(){if($('bgdp'))return;document.body.insertAdjacentHTML('beforeend','<div id="bgdp"><div class="pn"></div></div>');render();openT=Date.now()}
 function close(){var p=$('bgdp');if(p)p.remove()}
@@ -6148,7 +6148,7 @@ function add(txt){txt=String(txt||'').trim();if(!txt)return;var d=D(),b=d.lb||60
  if(m&&m[1].trim()){var n=parseFloat(m[2]);b=/^h/i.test(m[3])?Math.round(n*60):Math.round(n);txt=m[1].trim()}
  b=Math.max(5,Math.min(480,b));var t={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:txt.slice(0,60),b:b,sp:0,done:0};d.tasks.push(t);if(!d.act||!cur())d.act=t.id;if(d.act===t.id)pgState.task=t.t;pgSave();
  try{if(window.Notification&&Notification.permission==='default')Notification.requestPermission()}catch(e){}}
-function toggle(id){var d=D(),t=d.tasks.filter(function(x){return x.id===id})[0];if(!t)return;
+function toggle(id){var d=D(),t=d.tasks.filter(function(x){return x.id===id})[0];if(!t)return;var wd=t.done;setTimeout(function(){if(!wd&&t.done){var dn=d.tasks.filter(function(x){return x.done}).length,n=d.tasks.length;cheer(dn===n?'all':'task',{task:t.t,dn:dn,n:n,r:n-dn})}},0);
  if(!t.done){var used=t.sp/60;t.done=Date.now();t.sv=0;if(t.b&&used<t.b-1){t.sv=Math.round(t.b-used);d.bank.s+=t.sv}
   try{pgToast(t.sv>=3?'✓ Done in '+hm(used)+' · '+hm(t.sv)+' saved → free time':t.b&&used>t.b+1?'✓ Done · '+hm(used-t.b)+' over budget':'✓ Done · '+hm(used))}catch(e){}pgBonus(t.sv>=3?12:8);
   if(d.act===id){var nx=d.tasks.filter(function(x){return !x.done})[0];d.act=nx?nx.id:'';if(nx)pgState.task=nx.t}}
@@ -6163,7 +6163,7 @@ document.addEventListener('click',function(e){if(e.target&&e.target.id==='tl-in'
  if(a==='adone'){var t=cur();if(t)toggle(t.id);var c=$('bgtb');if(c)c.remove();render();return}
  if(a.indexOf('ext:')===0){var t2=cur();if(t2){t2.b+=+a.slice(4);pgSave()}var c2=$('bgtb');if(c2)c2.remove();render();return}
  if(a==='adis'){var c3=$('bgtb');if(c3)c3.remove();return}
- if(a==='plan'){qOpen('');return}if(a==='addf'){var ti=$('tl-in');if(ti)ti.focus();return}if(a.indexOf('bk:')===0){bkAct(a.slice(3));return}if(a==='eod'){close();eod();return}if(a==='eoc'){var m1=$('bged');if(m1)m1.remove();return}
+ if(a==='plan'){qOpen('');return}if(a==='addf'){var ti=$('tl-in');if(ti)ti.focus();return}if(a.indexOf('bk:')===0){bkAct(a.slice(3));return}if(a==='eod'){close();eod();return}if(a==='chset'){chOpen();return}if(a==='chx'){chClose();return}if(a==='chs'){chSave();chClose();return}if(a==='cht'){chSave();chClose();cheer('test');return}if(a==='eoc'){var m1=$('bged');if(m1)m1.remove();return}
  if(a==='eodn'){d.eod=dayKey();pgSave();var m2=$('bged');if(m2)m2.remove();try{pgToast('🌙 Day closed. Tomorrow’s plan is saved. Rest well.')}catch(e){}return}
  if(a==='bkx'){bkExp();return}if(a==='bki'){var bf=document.createElement('input');bf.type='file';bf.accept='.json,application/json';bf.style.display='none';bf.onchange=function(){if(bf.files&&bf.files[0])bkImp(bf.files[0]);bf.remove()};document.body.appendChild(bf);bf.click();return}if(a==='ntset'){ntOpen();return}if(a==='ntx'){ntClose();return}if(a==='ntt'){ntTest();return}if(a==='nts'){ntToggle();return}if(a==='vw'){vman=1;V=V==='t'?'':'t';tl(true);return}if(a.indexOf('dtm:')===0){(d.tm||[]).splice(+a.slice(4),1);pgSave();render();tl(true);if($('bged'))eod();return}if(a==='plantm'){qOpen('',null,1);return}
  if(a.indexOf('etm:')===0){qOpen('','tm:'+a.slice(4));return}
@@ -6246,7 +6246,7 @@ function render2(){if($('bgdp'))render();tl(true);dock()}
 function bkAct(id){var d=D(),t=d.tasks.filter(function(x){return x.id===id})[0];if(!t)return;
  if(t.done){toggle(id);render2();return}
  var run=pgState.running&&pgState.mode==='focus';
- if(d.act===id&&run){toggle(id);var dn2=d.tasks.filter(function(x){return x.done}).length;try{pgToast('✅ '+t.t+' done · '+dn2+'/'+d.tasks.length+(dn2===d.tasks.length?' · every task ticked, great day!':' · keep going, one block at a time'))}catch(e){}}
+ if(d.act===id&&run){toggle(id);var dn2=d.tasks.filter(function(x){return x.done}).length;try{if(!CH().on)pgToast('✅ '+t.t+' done · '+dn2+'/'+d.tasks.length+(dn2===d.tasks.length?' · every task ticked, great day!':' · keep going, one block at a time'))}catch(e){}}
  else{sel(id);try{pgToast('▶ '+t.t)}catch(e){}
   if(!run){try{if(pgState.running)pgPause();pgState.mode='focus';pgState.remaining=pgDuration();pgSave();if(!$('pg-intro'))pgGo();try{swSync()}catch(e){}}catch(e){}}}
  render2()}
@@ -6292,6 +6292,82 @@ function ntSave(){var n=NT(),e=$('nt-e'),dd=$('nt-d');if(e)n.e=e.checked?1:0;if(
 function ntTest(){ntSave();ntPost('Test from your study app. If you see this, phone alerts work.',0,null,true);try{pgToast('🔔 Test sent. Check your phone in a few seconds.')}catch(e){}}
 function ntToggle(){ntSave();var n=NT();n.on=n.on?0:1;pgSave();ntClose();try{pgToast(n.on?'🔔 Phone alerts ON':'🔔 Phone alerts off')}catch(e){}if($('bgdp'))render();if(n.on)ntSync()}
 
+
+/* ---- v71: cheers (personal, handwritten-style encouragement) ---- */
+function CH(){var o=sw3().ch=sw3().ch||{};if(o.on===undefined)o.on=1;if(!o.h)o.h={};if(o.nm===undefined)o.nm='';if(o.why===undefined)o.why='';return o}
+function chDays(){try{var dd=pgState.dday;if(dd&&dd.date&&dd.name&&dd.name!=='Target day'){var p=dd.date.split('-'),E=new Date(+p[0],+p[1]-1,+p[2]),t=new Date();t.setHours(0,0,0,0);var n=Math.round((E-t)/864e5);return n>0?n:null}}catch(e){}return null}
+var CHP={
+start:["Okay, {task}. {m} minutes, just this one thing. Phone can wait. I've got you.",
+"This hour is yours. Nothing else needs you right now, and it's going to pay you back. I promise.",
+"Hey, you showed up. Honestly that's the hardest part, and it's already done.",
+"{d} days to go, and look at you sitting down to do the work. This is exactly how people pass: quietly, one hour at a time.",
+"You don't have to feel motivated first. Just open the page and begin anywhere. I'm cheering from right here.",
+"You're closer than it feels, you know. Give the next {m} minutes your honest best, that's all I'm asking.",
+"Distractions can wait their turn. This hour is booked for you and for the future you who's already done with exams.",
+"Deep breath. Shoulders down. Now let's do {task}, nice and steady.",
+"You've handled harder things than this. {task}, one small bite at a time.",
+"I really like watching you do this. Steady, focused, no rush.",
+"This is the hour that'll count later, even if it doesn't feel like much right now. Trust it.",
+"Little by little this turns into 'I did it'. Starting now, {m} minutes.",
+"You don't have to be perfect today. Just be here, fully, for {m} minutes."],
+mid:["Halfway there already. See? You're in the groove now.",
+"Half the block is behind you. If your mind wandered, no stress, just come back to the line you were on.",
+"Look at you, still going. This is the kind of steadiness that ends up in your exam answers.",
+"You're past the middle. {l} minutes to go and you're doing great. Take a sip of water.",
+"Still here, still working. I'm genuinely proud of this.",
+"{task} is closer than it was ten minutes ago. Keep this pace."],
+fin:["Last few minutes. Finish it cleanly and then you've earned a proper break.",
+"Almost there. Just bring this one home.",
+"Nearly done, {l} minutes. You can do anything for {l} minutes, and you've been doing it all along.",
+"Final stretch! Stay with it, the break is right around the corner."],
+back:["Welcome back. No guilt, no lecture. Just pick up where you left off.",
+"Hey, you're back. That's the real skill: noticing, returning, continuing. Next line, go.",
+"Everyone drifts sometimes. You came back, and that's what matters. Easy does it.",
+"Right, phone's away? Lovely. Let's get the next few minutes in."],
+pause:["Take a breath, that's okay. This hour still counts. Come back whenever you're ready.",
+"Paused, not quit. Stretch a little, sip some water, and we'll continue.",
+"No pressure at all. When you're ready, I'm right here."],
+task:["{task}, done. That's one less thing between you and the exam. Proud of you.",
+"Ticked off: {task}. See how it works? One at a time, it all gets finished.",
+"Yes! {task} is finished. {r} to go, and you're clearly capable of every one of them.",
+"Nice one. {dn} of {n} done today. You're really near now.",
+"{task} done. Take one slow breath, then pick the next. You're on a roll."],
+all:["Every task for today is ticked. Go rest properly, you've earned a calm evening. See you tomorrow.",
+"All done for today! Look at that list. Be proud for a minute, then go relax."],
+block:["That's a full block done. Stand up, drink some water, roll your shoulders. You've earned this break.",
+"Block complete. The you who's passed the exam says thank you for this one.",
+"Done, and done well. Rest your eyes for a few minutes. Coming back fresh matters more than pushing on tired.",
+"Another one in the bank. Slow down for a moment, you did good work."],
+rest:["Break's over, but there's no rush. Whenever you're ready, we go again.",
+"Feeling fresh? Next block, same calm pace.",
+"Welcome back. One more block and you're even closer."]};
+var CHS=['rooting for you','you’ve got this','right here with you','go get it','proud of you already','I believe in you'];
+function chFill(t,c){var ok=true;var r=t.replace(/\{(\w+)\}/g,function(_,k){if(c[k]==null||c[k]===''){ok=false;return''}return c[k]});return ok?r:null}
+function chPick(kind,c){var L=CHP[kind]||[],h=CH().h,recent=h[kind]||[],pool=[];L.forEach(function(t,i){if(recent.indexOf(i)<0){var r=chFill(t,c);if(r)pool.push([i,r])}});if(!pool.length){h[kind]=[];L.forEach(function(t,i){var r=chFill(t,c);if(r)pool.push([i,r])})}if(!pool.length)return null;var p=pool[Math.floor(Math.random()*pool.length)];h[kind]=(h[kind]||[]).concat([p[0]]).slice(-Math.max(1,Math.min(4,L.length-1)));return p[1]}
+var chLast=0,chT=0;
+function chHide(){var o=$('sw-ch');if(!o)return;o.classList.add('out');setTimeout(function(){if(o.parentNode)o.remove()},400)}
+function cheer(kind,x){x=x||{};var f=$('fm'),C=CH();if(!C.on||!f||!f.classList.contains('sw'))return false;
+ var now=Date.now(),free={start:1,task:1,all:1,block:1,rest:1,test:1};if(!free[kind]&&now-chLast<60000)return false;
+ var t=cur&&cur(),c={task:x.task||(t&&t.t)||'',m:pgState.focus,d:chDays(),l:x.l,dn:x.dn,n:x.n,r:x.r},k=kind==='test'?'start':kind;
+ var msg=chPick(k,c);if(!msg)return false;var hr=new Date().getHours();
+ if(k==='start'&&Math.random()<.5){if(hr<11)msg='Good morning. '+msg;else if(hr>=21)msg='Late one tonight, so let’s make it count. '+msg}
+ var sub='';if(k==='task'||k==='all')sub=x.dn+' of '+x.n+' done today';else if(C.why&&(k==='start'||k==='back'||k==='pause')&&Math.random()<.4)sub='Remember why: '+C.why;
+ var sg=C.nm?C.nm:CHS[Math.floor(Math.random()*CHS.length)];chLast=now;
+ var old=$('sw-ch');if(old)old.remove();clearTimeout(chT);
+ document.body.insertAdjacentHTML('beforeend','<div id="sw-ch" role="status"><svg class="cha" viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#ffd9d0"/><path d="M12 18.2s-5.6-3.4-5.6-7.2a3.2 3.2 0 0 1 5.6-2.1 3.2 3.2 0 0 1 5.6 2.1c0 3.8-5.6 7.2-5.6 7.2z" fill="#ee6f74"/></svg><div class="chb"><p>'+esc(msg)+'</p>'+(sub?'<small>'+esc(sub)+'</small>':'')+'<span class="chn">— '+esc(sg)+'</span></div><button class="chk" aria-label="Close">×</button></div>');
+ var o=$('sw-ch'),col=f.querySelector('.sw-col');if(window.innerWidth>1000){var tp=col?col.getBoundingClientRect().bottom+12:250;o.style.top=Math.max(120,tp)+'px'}
+ o.addEventListener('click',function(){chHide()});chT=setTimeout(chHide,7000+msg.length*55);return true}
+function chOpen(){chClose();var C=CH();document.body.insertAdjacentHTML('beforeend','<div id="bgch"><div class="bqc"><h3>💛 Your cheer</h3><p>Short, warm notes appear while you study: when you start, halfway, after a task, after a block, and when you come back from a distraction. Never loud, never pressuring.</p><label class="chrow"><input type="checkbox" id="ch-on" '+(C.on?'checked':'')+'> Show cheers</label><label class="chfl">Sign the notes as <small>(optional: a friend, Mom, “Future me”)</small><input id="ch-nm" maxlength="24" value="'+ea(C.nm)+'" placeholder="Leave empty for a few warm sign-offs"></label><label class="chfl">My why <small>(sometimes shown under a note)</small><input id="ch-why" maxlength="90" value="'+ea(C.why)+'" placeholder="e.g. Become a CA and make my parents proud"></label><div class="ac"><button data-dp="chx">Close</button><button data-dp="cht">Preview</button><button class="pl" data-dp="chs">Save</button></div></div></div>')}
+function chClose(){var m=$('bgch');if(m)m.remove()}
+function chSave(){var C=CH(),a=$('ch-on'),b=$('ch-nm'),c=$('ch-why');if(a)C.on=a.checked?1:0;if(b)C.nm=b.value.trim();if(c)C.why=c.value.trim();pgSave();try{render2()}catch(e){}}
+function chTick(){if(!pgState.running||pgState.mode!=='focus')return;var f=$('fm');if(!f||!f.classList.contains('sw'))return;var el=budElapsed(),dur=pgDuration()/60,key=pgState.endsAt,C=CH();
+ if(el>=dur*.5&&C.mid!==key&&dur>=10){C.mid=key;cheer('mid',{l:Math.max(1,Math.round(dur-el))})}
+ else if(dur-el<=5&&dur-el>0&&dur>=15&&C.fin!==key&&C.mid===key){C.fin=key;cheer('fin',{l:Math.max(1,Math.round(dur-el))})}}
+var _chg=pgGo;pgGo=function(){var w=pgState.running;_chg.apply(this,arguments);if(!w&&pgState.running&&pgState.mode==='focus')setTimeout(function(){cheer('start')},900)};
+var _chp=pgPause;pgPause=function(){var w=pgState.running&&pgState.mode==='focus';_chp.apply(this,arguments);if(w)setTimeout(function(){if(!pgState.running)cheer('pause')},700)};
+var _chf=pgFinish;pgFinish=function(){var w=pgState.mode;_chf.apply(this,arguments);setTimeout(function(){cheer(w==='focus'?'block':'rest')},1400)};
+var chHid=0;document.addEventListener('visibilitychange',function(){if(document.hidden){chHid=(pgState.running&&pgState.mode==='focus')?Date.now():0;return}if(chHid&&Date.now()-chHid>90000&&pgState.running&&pgState.mode==='focus')setTimeout(function(){cheer('back')},600);chHid=0});
+
 var V='',vman=0;
 function tmTxt(d){return d.tm.slice(0,3).map(function(x){return esc(x.t)+' '+hm(x.b)}).join(', ')+(d.tm.length>3?' +'+(d.tm.length-3)+' more':'')}
 function tl(force){var o=$('tl-v');if(!o)return;var d=D(),S=sched(),nm=S.nowM,v=vman?V:(nm>S.bed?'t':'');V=v;var T=V==='t',tmn=d.tm?d.tm.length:0,late=nm>=S.bed-180&&nm<=S.bed+90,
@@ -6322,7 +6398,7 @@ document.addEventListener('keydown',function(e){if(e.key!=='Enter'||e.isComposin
  if(t.closest&&t.closest('#bgq')&&(t.tagName!=='BUTTON'||/^q[ca]:/.test(t.getAttribute('data-dp')||''))){if(t.tagName==='TEXTAREA'&&e.shiftKey)return;e.preventDefault();e.stopPropagation();if(t.id==='bq-t'){var ta=$('bq-t');Q.items=parseItems(ta.value);if(Q.items.length)qRender()}else qSave()}},true);
 var _o=swOpen;swOpen=function(){_o();var o=$('fm');if(!o)return;if(!$('sw-nt'))o.insertAdjacentHTML('beforeend','<div id="sw-nt"></div>');if(!$('sw-tl'))o.insertAdjacentHTML('beforeend','<div id="sw-tl" data-dp="open" title="Tap for today’s plan"><div class="h"><span class="k" id="tl-k"></span><b class="nw" id="tl-n"></b><span class="rt"><button id="tl-md" data-dp="vw"></button><input id="tl-in" autocomplete="off" maxlength="120"></span></div><div id="tl-v"></div></div>');var ic=o.querySelector('.sw-ico');if(ic&&!$('sw-dpb')){ic.insertAdjacentHTML('afterbegin','<button class="sw-btn ic" id="sw-dpb" data-dp="open" aria-label="Today’s plan" title="Today’s plan: tasks, time budgets, day flow">📋</button>')}dock();tl(true)};fmOpen=swOpen;
 var _s=swSync;swSync=function(){_s();track();dock();tl();nt();var dd=D();if(dd.loaded){dd.loaded=0;pgSave();try{pgToast('☀️ Good morning. Today’s plan is loaded, '+dd.tasks.filter(function(t){return !t.done}).length+' tasks ready')}catch(e){}}if($('bgdp')&&Date.now()-openT>20000&&!(document.activeElement&&document.activeElement.id==='dp-i')){openT=Date.now();render()}};
-setInterval(function(){track();ntSync()},2000);
+setInterval(function(){track();ntSync();chTick()},2000);
 })();
 
 
@@ -6376,5 +6452,25 @@ pgMigrate();envApply();navBuild();showHome();navSync();
 .sw .sw-go{background:linear-gradient(135deg,rgb(var(--par)),rgba(var(--par),.8))!important;color:#2a1d10!important}.sw #tl-md{background:rgb(var(--par))!important}
 .sw #sw-tl .el{background:linear-gradient(90deg,rgba(var(--par),.28),rgba(var(--par),.62))!important}
 @media(min-width:1001px){.sw .sw-top{padding-inline:14px!important}.sw .sw-dock{left:14px!important;bottom:14px!important}.sw #sw-tl{bottom:14px!important}.sw #sw-nt{left:14px!important}.sw #sw-goal{left:98px!important;top:12px!important}.sw #sw-fr{left:297px!important;top:14px!important}.sw #sw-cal,.sw .sw-cal{top:60px!important}.sw #sw-roomc{top:60px!important}.sw .sw-col{top:98px!important}}
+</style>
+<style id="v71">
+#sw-ch{position:fixed;right:14px;top:250px;width:250px;z-index:9400;display:flex;gap:10px;align-items:flex-start;padding:13px 30px 12px 13px;background:#fff6e4;color:#4a3320;border-radius:6px 6px 16px 6px;box-shadow:0 12px 28px rgba(0,0,0,.4),inset 0 -14px 22px rgba(220,170,90,.16);transform:rotate(.9deg);font-family:"Caveat","Segoe Print","Ink Free","Bradley Hand","Comic Sans MS",cursive;cursor:pointer;animation:chin .55s ease-out 1}
+#sw-ch.out{opacity:0;transition:opacity .4s}
+#sw-ch .cha{flex:none;margin-top:2px}#sw-ch .chb{min-width:0}
+#sw-ch p{margin:0;font-size:19px;line-height:1.25;font-weight:600}
+#sw-ch small{display:block;margin-top:6px;font-size:15px;line-height:1.2;opacity:.8;font-style:italic}
+#sw-ch .chn{display:block;margin-top:6px;text-align:right;font-size:16px;color:#b5483f;font-weight:700}
+#sw-ch .chk{position:absolute;top:4px;right:6px;border:0;background:none;color:#4a3320;opacity:.45;font:700 20px system-ui;cursor:pointer;line-height:1}
+@keyframes chin{from{opacity:0;transform:translateY(10px) rotate(2deg)}to{opacity:1;transform:rotate(.9deg)}}
+@media(max-width:1250px){#sw-ch{width:215px}#sw-ch p{font-size:17px}}
+@media(min-width:1700px){#sw-ch{width:300px}#sw-ch p{font-size:21px}}
+@media(max-width:1000px){#sw-ch{left:12px;right:12px;width:auto;top:auto!important;bottom:100px}}
+#bgch{position:fixed;inset:0;z-index:9650;background:rgba(5,4,14,.76);display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#fff;padding:12px}
+#bgch .bqc{width:min(480px,100%);max-height:92vh;overflow:auto;background:rgba(24,18,40,.99);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:18px}
+#bgch h3{margin:0 0 8px;font:700 19px system-ui}#bgch p{margin:0 0 12px;font-size:13px;line-height:1.5;opacity:.85}
+#bgch .chrow{display:flex;gap:8px;align-items:center;margin:0 0 12px;font-size:14px}
+#bgch .chfl{display:block;margin:0 0 12px;font:700 13px system-ui}#bgch .chfl small{font-weight:500;opacity:.7}
+#bgch input[type=text],#bgch .chfl input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;font:14px system-ui}
+#bgch .ac{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}#bgch .ac button{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 14px;font:700 13px system-ui;cursor:pointer}#bgch .ac button.pl{background:#f5b45a;color:#2a1d10;border-color:#f5b45a}
 </style>
 </body></html>
